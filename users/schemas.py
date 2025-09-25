@@ -1,6 +1,5 @@
-from .base import Base, NameStr, PasswordStr
+from .base import Base, NameStr
 from pydantic import Field, EmailStr
-from typing import Annotated
 
 
 class UserCreate(Base):
@@ -8,4 +7,4 @@ class UserCreate(Base):
     surname: NameStr
     username: NameStr
     email: EmailStr
-    password: PasswordStr
+    password: str
