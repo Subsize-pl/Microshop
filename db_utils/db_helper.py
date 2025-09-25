@@ -9,7 +9,10 @@ class DatabaseHelper:
             echo=echo,
         )
         self.session_factory = async_sessionmaker(
-            bind=self.engine, autoflush=False, autocommit=False, expire_on_commit=False
+            bind=self.engine,
+            autoflush=False,
+            autocommit=False,
+            expire_on_commit=False,
         )
 
 
