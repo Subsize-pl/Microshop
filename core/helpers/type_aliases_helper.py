@@ -21,5 +21,5 @@ class TypeAliasesHelper:
         ),
     ]
 
-type_aliases_helper = TypeAliasesHelper()
 
+type_aliases_helper = TypeAliasesHelper()
