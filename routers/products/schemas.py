@@ -1,31 +1,14 @@
 from pydantic import Field, ConfigDict
-from typing import Annotated
+from typing import Annotated, Optional
 from pydantic import BaseModel
 from core.helpers import product_helper
 from datetime import datetime
 
 
 class ProductBase(BaseModel):
-    name: Annotated[
-        str,
-        Field(
-            max_length=product_helper.NAME_MAX_LEN,
-            min_length=product_helper.NAME_MIN_LEN,
-        ),
-    ]
-    description: Annotated[
-        str,
-        Field(
-            max_length=product_helper.DESCRIPTION_MAX_LEN,
-            min_length=product_helper.DESCRIPTION_MIN_LEN,
-        ),
-    ]
-    price: Annotated[
-        int,
-        Field(
-            ge=product_helper.PRICE_MIN_VALUE,
-        ),
-    ]
+    name: product_helper.NameStr
+    description: product_helper.DescriptionStr
+    price: product_helper.PriceInt
 
 
 class Product(ProductBase):
@@ -38,4 +21,14 @@ class Product(ProductBase):
 
 
 class ProductCreate(ProductBase):
+    pass
+
+
+class ProductUpdate(ProductBase):  # Partial update
+    name: Optional[product_helper.NameStr] = None
+    description: Optional[product_helper.DescriptionStr] = None
+    price: Optional[product_helper.PriceInt] = None
+
+
+class ProductDelete(ProductBase):
     pass
