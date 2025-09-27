@@ -9,17 +9,23 @@ from .schemas import (
 
 
 async def get_products(session: AsyncSession) -> List[Product]:
-    stmt = select(Product).order_by(Product.id)
+    stmt = select(ProductORM).order_by(ProductORM.id)
     result: Result = await session.execute(stmt)
     products = result.scalars().all()
     return list(products)
 
 
-async def get_product(session: AsyncSession, product_id: int) -> Optional[Product]:
-    return await session.get(Product, product_id)
+async def get_product(
+    session: AsyncSession,
+    product_id: int,
+) -> Optional[Product]:
+    return await session.get(ProductORM, product_id)
 
 
-async def create_product(session: AsyncSession, product_in: ProductCreate) -> Product:
+async def create_product(
+    session: AsyncSession,
+    product_in: ProductCreate,
+) -> Product:
     product = ProductORM(**product_in.model_dump())
     session.add(product)
     await session.commit()
