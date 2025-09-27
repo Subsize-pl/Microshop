@@ -3,7 +3,7 @@ from passlib.context import CryptContext
 
 class PwdHelper:
     def __init__(self):
-        self.pwd_context = CryptContext(schemas=["bcrypt"], deprecated="auto")
+        self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     def hash_password(self, pwd: str) -> str:
         return self.pwd_context.hash(pwd)
