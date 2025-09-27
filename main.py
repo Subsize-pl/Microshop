@@ -1,10 +1,10 @@
 from fastapi import FastAPI
-from products import router
+from routers import products_router
 import asyncio
 
 
 app = FastAPI()
-app.include_router(router=router)
+app.include_router(router=products_router)
 
 
 # if __name__ == "__main__":
