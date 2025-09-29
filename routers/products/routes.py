@@ -29,7 +29,7 @@ async def get_product(
     return product
 
 
-@router.post("/")
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_product(
     product_in: ProductCreate,
     session: AsyncSession = Depends(db_helper.session_dependency),
@@ -50,7 +50,7 @@ async def update_product(
     )
 
 
-@router.delete("/{product_id}")
+@router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_product(
     product_delete: ProductDelete = Depends(dependencies.get_product),
     session: AsyncSession = Depends(db_helper.session_dependency),
