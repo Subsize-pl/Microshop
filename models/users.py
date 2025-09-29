@@ -1,13 +1,11 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 from .base import Base
-from core.helpers import (
-    user_helper,
-    type_aliases_helper as type_helper,
-)
+from core.helpers import user_helper
+from core.mixins import Timestamp
 
 
-class User(Base):
+class User(Timestamp, Base):
     firstname: Mapped[str] = mapped_column(
         String(user_helper.FIRSTNAME_MAX_LEN),
         nullable=user_helper.FIRSTNAME_MIN_LEN,
@@ -28,5 +26,3 @@ class User(Base):
     password: Mapped[str] = mapped_column(
         nullable=False,
     )
-    created_at: Mapped[type_helper.CreatedAt]
-    updated_at: Mapped[type_helper.UpdatedAt]
