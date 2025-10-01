@@ -4,6 +4,7 @@ from sqlalchemy.orm import (
     mapped_column,
     declared_attr,
 )
+from core.helpers import TbHelper
 
 
 class Base(DeclarativeBase):
@@ -12,10 +13,4 @@ class Base(DeclarativeBase):
 
     @declared_attr
     def __tablename__(cls) -> str:
-        name = cls.__name__.lower()
-        if name.endswith("y"):
-            return name[:-1] + "ies"
-        elif name.endswith("s"):
-            return name
-        else:
-            return name + "s"
+        return TbHelper.generate_tn(cls.__name__)
