@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Optional
-
+from core.helpers import TbHelper
 from sqlalchemy.orm import relationship, Mapped, declared_attr, mapped_column
 from sqlalchemy import ForeignKey
 
@@ -14,12 +14,12 @@ class CategoryRelationMixin:
     @declared_attr
     def category_id(cls) -> Mapped[int]:
         return mapped_column(
-            ForeignKey(f"{Category.__tablename__}.id"),
+            ForeignKey(f"{TbHelper.generate_tn("Category")}.id"),
             nullable=cls._category_nullable,
         )
 
     @declared_attr
-    def category(cls) -> Mapped[Category]:
+    def category(cls) -> Mapped["Category"]:
         return relationship(
             "Category",
             back_populates=cls._category_back_populates,
