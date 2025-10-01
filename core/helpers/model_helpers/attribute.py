@@ -1,8 +1,3 @@
-from typing import Annotated
-
-from pydantic import Field
-
-
 class AttributeHelper:
     NAME_MAX_LEN: int = 128
     NAME_NULLABLE: bool = False
