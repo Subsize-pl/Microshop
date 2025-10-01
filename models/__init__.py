@@ -7,6 +7,7 @@ __all__ = (
     "ProductAttribute",
     "CartItem",
     "Order",
+    "OrderItem",
 )
 
 from .base import Base
@@ -17,3 +18,4 @@ from .attributes import Attribute
 from .product_attributes import ProductAttribute
 from .cart_Items import CartItem
 from .orders import Order
+from .order_items import OrderItem
