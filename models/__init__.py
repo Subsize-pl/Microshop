@@ -5,7 +5,8 @@ __all__ = (
     "Category",
     "Attribute",
     "ProductAttribute",
-    "CartItems",
+    "CartItem",
+    "Order",
 )
 
 from .base import Base
@@ -14,4 +15,5 @@ from .products import Product
 from .categories import Category
 from .attributes import Attribute
 from .product_attributes import ProductAttribute
-from .cart_Items import CartItems
+from .cart_Items import CartItem
+from .orders import Order

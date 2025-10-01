@@ -1,12 +1,15 @@
 from sqlalchemy import String
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import mapped_column, Mapped, declared_attr
 from core.helpers import attr_helper, TbHelper
 from core.mixins.category import CategoryRelationMixin
 from models import Base
 
 
 class Attribute(CategoryRelationMixin, Base):
-    _category_back_populates = f"{TbHelper.generate_tn(__name__)}"
+    @declared_attr
+    def _category_back_populates(cls):
+        return TbHelper.generate_tn(cls)
+
     _category_nullable = True  # For common products
 
     name: Mapped[str] = mapped_column(

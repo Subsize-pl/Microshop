@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, declared_attr
 
 from core.mixins import (
     ProductRelationMixin,
@@ -8,8 +8,11 @@ from models import Base
 from core.helpers import TbHelper
 
 
-class CartItems(ProductRelationMixin, UserRelationMixin, Base):
-    _product_back_populates = f"{TbHelper.generate_tn(__name__)}"
+class CartItem(ProductRelationMixin, UserRelationMixin, Base):
+    @declared_attr
+    def _product_back_populates(cls):
+        return TbHelper.generate_tn(cls)
+
     _user_back_populates = f"{TbHelper.generate_tn(__name__)}"
 
     quantity: Mapped[int]

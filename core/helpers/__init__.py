@@ -3,6 +3,7 @@ __all__ = (
     "db_helper",
     "product_helper",
     "category_helper",
+    "product_attr_helper",
     "attr_helper",
     "user_helper",
     "pwd_helper",
@@ -15,5 +16,6 @@ from .model_helpers import (
     category_helper,
     user_helper,
     attr_helper,
+    product_attr_helper,
 )
 from .password_helper import pwd_helper

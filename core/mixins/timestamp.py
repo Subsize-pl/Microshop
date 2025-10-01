@@ -3,7 +3,7 @@ from sqlalchemy import text, DateTime
 from sqlalchemy.orm import mapped_column, Mapped
 
 
-class Timestamp:
+class TimestampMixin:
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=text("TIMEZONE('utc', now())"),

@@ -2,10 +2,10 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 from .base import Base
 from core.helpers import user_helper
-from core.mixins import Timestamp
+from core.mixins import TimestampMixin
 
 
-class User(Timestamp, Base):
+class User(TimestampMixin, Base):
     firstname: Mapped[str] = mapped_column(
         String(user_helper.FIRSTNAME_MAX_LEN),
         nullable=user_helper.FIRSTNAME_MIN_LEN,
