@@ -1,35 +1,39 @@
-from .base import Base, NameStr
-from pydantic import Field, EmailStr
-from typing import Optional, Annotated
+from datetime import datetime
+from typing import Annotated
+
+from black.brackets import Optional
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+from core.helpers import user_helper
 
 
-class UserBase(Base):
-    firstname: NameStr
-    surname: Optional[NameStr]
-    username: NameStr
+class UserBase(BaseModel):
+    firstname: user_helper.FirstnameStr
+    surname: user_helper.SurnameStr
+    username: user_helper.UsernameStr
     email: EmailStr
-    password: str
-
-
-class UserCreate(UserBase):
-    pass
 
 
 class User(UserBase):
-    id: Annotated[int, Field(gt=1)]
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    created_at: datetime
+    updated_at: datetime
 
 
-class UserDelete(User):
-    pass
+class UserCreate(UserBase):
+    password: Annotated[
+        str,
+        Field(min_length=1),
+    ]
 
 
-class UserUpdatePartial(UserBase):
-    firstname: Optional[NameStr] = None
-    surname: Optional[NameStr] = None
-    username: Optional[NameStr] = None
+class UserUpdate(UserBase):  # Partial update
+    firstname: Optional[user_helper.FirstnameStrStr] = None
+    surname: Optional[user_helper.SurnameStr] = None
+    username: Optional[user_helper.UsernameStr] = None
     email: Optional[EmailStr] = None
-    password: Optional[str] = None
 
 
-class UserUpdate(UserBase):
+class UserDelete(UserBase):
     pass
