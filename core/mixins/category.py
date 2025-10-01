@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship, Mapped, declared_attr, mapped_column
 from sqlalchemy import ForeignKey
 
 if TYPE_CHECKING:
-    from models.categories import Category
+    from models import Category
 
 
 class CategoryRelationMixin:
