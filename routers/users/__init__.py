@@ -1,5 +1,3 @@
-__all__ = (
-    "UserCreate",
-)
+__all__ = ("UserCreate",)
 
 from .schemas import UserCreate
