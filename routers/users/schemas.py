@@ -18,7 +18,7 @@ class UserCreate(UserBase):
     email: EmailStr
 
 
-class User(UserBase, UserCreate):
+class User(UserCreate):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -27,7 +27,7 @@ class User(UserBase, UserCreate):
 
 
 class UserUpdate(UserBase):  # Partial update
-    firstname: Optional[user_helper.FirstnameStrStr] = None
+    firstname: Optional[user_helper.FirstnameStr] = None
     surname: Optional[user_helper.SurnameStr] = None
     username: Optional[user_helper.UsernameStr] = None
     email: Optional[EmailStr] = None
