@@ -1,10 +1,13 @@
 from enum import Enum
 from sqlalchemy import Enum as SQLEnum
-from sqlalchemy.orm import Mapped, mapped_column, declared_attr
-
+from sqlalchemy.orm import Mapped, mapped_column, declared_attr, relationship
+from typing import TYPE_CHECKING
 from core.mixins import TimestampMixin, UserRelationMixin
 from models import Base
 from core.helpers import TbHelper
+
+if TYPE_CHECKING:
+    from models import OrderItem
 
 
 class OrderStatus(Enum):
@@ -27,4 +30,9 @@ class Order(UserRelationMixin, TimestampMixin, Base):
         nullable=False,
         default=OrderStatus.pending,
         server_default=OrderStatus.pending.value,
+    )
+
+    order_items: Mapped["OrderItem"] = relationship(
+        "OrderItem",
+        back_populates="order",
     )

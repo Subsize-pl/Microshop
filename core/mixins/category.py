@@ -1,7 +1,7 @@
-from typing import TYPE_CHECKING, Optional
-from core.helpers import TbHelper
+from typing import Optional, TYPE_CHECKING
 from sqlalchemy.orm import relationship, Mapped, declared_attr, mapped_column
 from sqlalchemy import ForeignKey
+from core.helpers import TbHelper
 
 if TYPE_CHECKING:
     from models import Category
@@ -14,7 +14,7 @@ class CategoryRelationMixin:
     @declared_attr
     def category_id(cls) -> Mapped[int]:
         return mapped_column(
-            ForeignKey(f"{TbHelper.generate_tn("Category")}.id"),
+            ForeignKey(f"{TbHelper.generate_tn('Category')}.id"),
             nullable=cls._category_nullable,
         )
 

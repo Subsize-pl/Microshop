@@ -1,5 +1,4 @@
 from asyncio import current_task
-from contextlib import asynccontextmanager
 
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
@@ -40,6 +39,6 @@ class DatabaseHelper:
 
 
 db_helper = DatabaseHelper(
-    url=settings.DB_URL_asyncpg,
-    echo=settings.db_echo,
+    url=settings.db.DB_URL_asyncpg,
+    echo=settings.db.echo,
 )

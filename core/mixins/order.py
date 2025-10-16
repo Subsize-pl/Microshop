@@ -19,7 +19,7 @@ class OrderRelationMixin:
         )
 
     @declared_attr
-    def attribute(cls) -> Mapped["Order"]:
+    def order(cls) -> Mapped["Order"]:
         return relationship(
             "Order",
             back_populates=cls._order_back_populates,

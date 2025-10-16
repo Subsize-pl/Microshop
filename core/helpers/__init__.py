@@ -7,6 +7,7 @@ __all__ = (
     "attr_helper",
     "user_helper",
     "pwd_helper",
+    "cart_item_helper",
 )
 from .tablename import TablenameHelper as TbHelper
 from .db_helper import db_helper
@@ -17,5 +18,6 @@ from .model_helpers import (
     user_helper,
     attr_helper,
     product_attr_helper,
+    cart_item_helper,
 )
 from .password_helper import pwd_helper

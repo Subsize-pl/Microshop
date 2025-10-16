@@ -2,6 +2,8 @@ from passlib.context import CryptContext
 
 
 class PwdHelper:
+    pwd_context: CryptContext
+
     def __init__(self):
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
