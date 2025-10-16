@@ -30,7 +30,7 @@ target_metadata = models.Base.metadata
 # ... etc.
 from core.config import settings
 
-config.set_main_option("sqlalchemy.url", settings.DB_URL_asyncpg)
+config.set_main_option("sqlalchemy.url", settings.db.DB_URL_asyncpg)
 
 
 def run_migrations_offline() -> None:
