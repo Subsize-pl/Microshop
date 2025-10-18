@@ -1,5 +1,5 @@
 from typing import Annotated, Optional
-from pydantic import Field
+from pydantic import Field, EmailStr
 
 
 class UserHelper:
@@ -9,7 +9,7 @@ class UserHelper:
 
     LASTNAME_MAX_LEN: int = 128
     LASTNAME_MIN_LEN: int = 1
-    LASTNAME_NULLABLE: bool = False
+    LASTNAME_NULLABLE: bool = True
 
     USERNAME_MAX_LEN: int = 128
     USERNAME_MIN_LEN: int = 1
@@ -18,34 +18,47 @@ class UserHelper:
 
     EMAIL_MAX_LEN: int = 256  # RFC рекомендует до 254 символов
     EMAIL_NULLABLE: bool = False
-    EMAIL_UNIQUE: bool = False
+    EMAIL_UNIQUE: bool = True
 
     HASH_MAX_LEN: int = 128  # достаточно для bcrypt
     HASH_NULLABLE: bool = False
 
-    FirstnameStr = Annotated[
-        Optional[str] if FIRSTNAME_NULLABLE else str,
-        Field(
-            min_length=FIRSTNAME_MIN_LEN,
-            max_length=FIRSTNAME_MAX_LEN,
-        ),
-    ]
+    @staticmethod
+    def StrField(nullable: bool, min_len: int, max_len: int):
+        return Annotated[
+            Optional[str] if nullable else str,
+            Field(
+                min_length=min_len,
+                max_length=max_len,
+                default=None if nullable else ...,
+            ),
+        ]
 
-    SurnameStr = Annotated[
-        Optional[str] if LASTNAME_NULLABLE else str,
-        Field(
-            min_length=LASTNAME_MIN_LEN,
-            max_length=LASTNAME_MAX_LEN,
-        ),
-    ]
+    @staticmethod
+    def EmailField(nullable: bool):
+        return Annotated[
+            Optional[EmailStr] if nullable else EmailStr,
+            Field(
+                default=None if nullable else ...,
+            ),
+        ]
 
-    UsernameStr = Annotated[
-        Optional[str] if USERNAME_NULLABLE else str,
-        Field(
-            min_length=USERNAME_MIN_LEN,
-            max_length=USERNAME_MAX_LEN,
-        ),
-    ]
+    FirstnameStr = StrField(
+        FIRSTNAME_NULLABLE,
+        FIRSTNAME_MIN_LEN,
+        FIRSTNAME_MAX_LEN,
+    )
+    LastnameStr = StrField(
+        LASTNAME_NULLABLE,
+        LASTNAME_MIN_LEN,
+        LASTNAME_MAX_LEN,
+    )
+    UsernameStr = StrField(
+        USERNAME_NULLABLE,
+        USERNAME_MIN_LEN,
+        USERNAME_MAX_LEN,
+    )
+    UserEmailStr = EmailField(EMAIL_NULLABLE)
 
 
 user_helper = UserHelper()
