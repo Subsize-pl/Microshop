@@ -1,36 +1,16 @@
-from typing import Optional
-from fastapi import APIRouter, Depends, Form, HTTPException, status
+from typing import Any
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from models.users import User as UserORM
-from core.helpers import db_helper
+
+from .services import validate_user, ensure_unique_user, get_curr_user
+from fastapi import APIRouter, Depends
+from routers.users.crud import create_user
+from core.helpers import db_helper, pwd_helper
 from auth.jwt_auth import utils
 from auth.jwt_auth.scheme import TokenInfo
-from routers.users.schemas import User
-from core.helpers.password_helper import pwd_helper
+from routers.users.schemas import User, UserCreate
 
 jwt_auth_router = APIRouter(prefix="/jwt", tags=["Auth JWT"])
-
-
-async def validate_user(
-    username=Form(),
-    password=Form(),
-    session: AsyncSession = Depends(db_helper.session_dependency),
-) -> Optional[User]:
-    unauthed_exc = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid username or password",
-    )
-
-    if user := await session.get(UserORM, username) is None:
-        raise unauthed_exc
-
-    if not pwd_helper.verify_password(
-        plain_pwd=password,
-        hashed_pwd=user.password,
-    ):
-        raise unauthed_exc
-
-    return user
 
 
 @jwt_auth_router.post("/login")
@@ -38,7 +18,7 @@ async def issue_jwt(
     user: User = Depends(validate_user),
 ) -> TokenInfo:
     payload = {
-        "sub": user.id,
+        "sub": str(user.id),
         "username": user.username,
     }
     token: str = utils.encode_jwt(
@@ -47,3 +27,24 @@ async def issue_jwt(
     return TokenInfo(
         access_token=token,
     )
+
+
+@jwt_auth_router.post("/register")
+async def register_user(
+    user_in: UserCreate = Depends(ensure_unique_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+) -> User:
+    return await create_user(
+        user_in=user_in,
+        session=session,
+    )
+
+
+@jwt_auth_router.get("/me")
+async def check_self_info(
+    user: User = Depends(get_curr_user),
+) -> dict[str, Any]:
+    return {
+        "username": user.username,
+        "email": user.email,
+    }
