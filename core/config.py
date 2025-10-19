@@ -22,6 +22,7 @@ class AuthJWT(BaseSettings):
 
     algorithm: str
     access_token_expire_minutes: int
+    refresh_token_expire_days: int
 
     private_key_path: str
     public_key_path: str
