@@ -11,48 +11,11 @@ from jwt.exceptions import InvalidTokenError
 from routers.users.schemas import User
 from core.helpers import pwd_helper
 
-http_bearer = HTTPBearer()
-
-
-def get_curr_user_payload(
-    credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
-) -> dict[str, Any]:
-    token = credentials.credentials
-    try:
-        payload = decode_jwt(jwt_token=token)
-    except InvalidTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
-        )
-    return payload
-
-
-async def ensure_unique_user(
-    user_in: Annotated[UserCreate, Body],
-    session: AsyncSession = Depends(db_helper.session_dependency),
-) -> Optional[UserCreate]:
-    conditions = [UserORM.username == user_in.username]
-
-    if user_in.email is not None:
-        conditions.append(UserORM.email == user_in.email)
-
-    stmt = select(UserORM).where(or_(*conditions))
-    existing_user = await session.scalar(stmt)
-
-    if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username or email already taken",
-        )
-
-    return user_in
-
 
 async def validate_user_by_form(
-    username=Form(),
-    password=Form(),
-    session: AsyncSession = Depends(db_helper.session_dependency),
+    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
+    username=Annotated[str, Form()],
+    password=Annotated[str, Form()],
 ) -> Optional[User]:
     unauthed_exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -72,3 +35,44 @@ async def validate_user_by_form(
         raise unauthed_exc
 
     return user
+
+
+http_bearer = HTTPBearer()
+
+
+def get_curr_user_payload(
+    credentials: Annotated[
+        HTTPAuthorizationCredentials,
+        Depends(http_bearer),
+    ],
+) -> dict[str, Any]:
+    token = credentials.credentials
+    try:
+        payload = decode_jwt(jwt_token=token)
+    except InvalidTokenError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+        )
+    return payload
+
+
+async def ensure_unique_user(
+    user_in: Annotated[UserCreate, Body],
+    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
+) -> Optional[UserCreate]:
+    conditions = [UserORM.username == user_in.username]
+
+    if user_in.email is not None:
+        conditions.append(UserORM.email == user_in.email)
+
+    stmt = select(UserORM).where(or_(*conditions))
+    existing_user = await session.scalar(stmt)
+
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username or email already taken",
+        )
+
+    return user_in

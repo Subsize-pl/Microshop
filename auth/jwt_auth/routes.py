@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from .services import ensure_unique_user, get_curr_user_payload
 from fastapi import APIRouter, Depends
@@ -17,10 +17,10 @@ from .helpers import (
 jwt_auth_router = APIRouter(prefix="/jwt", tags=["Auth JWT"])
 
 
-@jwt_auth_router.post("/login")
+@jwt_auth_router.post("/login", response_model=TokenInfo)
 async def issue_jwt(
-    user: User = Depends(validate_user_by_form),
-) -> TokenInfo:
+    user: Annotated[User, Depends(validate_user_by_form)],
+):
     access_token = token_creator.create_access_token(user)
     refresh_token = token_creator.create_refresh_token(user)
 
@@ -30,12 +30,12 @@ async def issue_jwt(
     )
 
 
-@jwt_auth_router.post("/refresh")
+@jwt_auth_router.post("/refresh", response_model=TokenInfo)
 async def refresh_access_token(
-    user: User = Depends(get_user_by_refresh_token),
+    user: Annotated[User, Depends(get_user_by_refresh_token)],
     # cached data -- no problem
-    payload: dict = Depends(get_curr_user_payload),
-) -> TokenInfo:
+    payload: Annotated[dict, Depends(get_curr_user_payload)],
+):
     access_token = token_creator.create_access_token(user)
     refresh_token = token_creator.create_refresh_token(user)
 
@@ -47,11 +47,11 @@ async def refresh_access_token(
     )
 
 
-@jwt_auth_router.post("/register")
+@jwt_auth_router.post("/register", response_model=User)
 async def register_user(
-    user_in: UserCreate = Depends(ensure_unique_user),
-    session: AsyncSession = Depends(db_helper.session_dependency),
-) -> User:
+    user_in: Annotated[UserCreate, Depends(ensure_unique_user)],
+    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
+):
     return await create_user(
         user_in=user_in,
         session=session,
@@ -60,7 +60,7 @@ async def register_user(
 
 @jwt_auth_router.get("/me")
 async def check_self_info(
-    user: User = Depends(get_user_by_access_token),
+    user: Annotated[User, Depends(get_user_by_access_token)],
 ) -> dict[str, Any]:
     return {
         token_fields.USERNAME_FIELD: user.username,
