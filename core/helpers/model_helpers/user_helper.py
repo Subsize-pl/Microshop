@@ -16,12 +16,16 @@ class UserHelper:
     USERNAME_NULLABLE: bool = False
     USERNAME_UNIQUE: bool = True
 
-    EMAIL_MAX_LEN: int = 256  # RFC рекомендует до 254 символов
+    EMAIL_MAX_LEN: int = 256  # RFC recommends <= 254 symbols
     EMAIL_NULLABLE: bool = False
     EMAIL_UNIQUE: bool = True
 
-    HASH_MAX_LEN: int = 128  # достаточно для bcrypt
+    HASH_MAX_LEN: int = 128  # enough for bcrypt
     HASH_NULLABLE: bool = False
+
+    DEFAULT_IS_ACTIVE: bool = True
+    DEFAULT_IS_SUPERUSER: bool = False
+    DEFAULT_IS_VERIFIED: bool = True  # temporarily
 
     @staticmethod
     def StrField(nullable: bool, min_len: int, max_len: int):

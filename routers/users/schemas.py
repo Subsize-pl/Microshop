@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated, Optional
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
-from core.helpers import user_helper
+from pydantic import BaseModel, ConfigDict, Field
+from core.helpers.model_helpers import user_helper
 
 
 class UserBase(BaseModel):
@@ -25,6 +25,10 @@ class User(UserBase):
     firstname: user_helper.FirstnameStr
     lastname: user_helper.LastnameStr
     email: user_helper.UserEmailStr
+    is_active: bool = user_helper.DEFAULT_IS_ACTIVE
+    is_superuser: bool = user_helper.DEFAULT_IS_SUPERUSER
+    is_verified: bool = user_helper.DEFAULT_IS_VERIFIED
+
     created_at: datetime
     updated_at: datetime
 

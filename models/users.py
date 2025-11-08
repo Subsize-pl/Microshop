@@ -1,5 +1,5 @@
 from typing import List, TYPE_CHECKING
-from sqlalchemy import String
+from sqlalchemy import String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 from core.helpers import user_helper
@@ -31,6 +31,18 @@ class User(TimestampMixin, Base):
     password_hash: Mapped[str] = mapped_column(
         String(user_helper.HASH_MAX_LEN),
         nullable=user_helper.HASH_NULLABLE,
+    )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean,
+        default=user_helper.DEFAULT_IS_ACTIVE,
+    )
+    is_superuser: Mapped[bool] = mapped_column(
+        Boolean,
+        default=user_helper.DEFAULT_IS_SUPERUSER,
+    )
+    is_verified: Mapped[bool] = mapped_column(
+        Boolean,
+        default=user_helper.DEFAULT_IS_VERIFIED,
     )
 
     cart_items: Mapped[List["CartItem"]] = relationship(
