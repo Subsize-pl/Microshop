@@ -1,6 +1,7 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 import routers.products.crud as crud
+from auth.jwt_auth.dependencies import get_active_user_by_access_token
 from core.helpers import db_helper
 from typing import List, Optional, Annotated
 from .schemas import (
@@ -12,7 +13,12 @@ from .schemas import (
 import routers.products.dependencies as dependencies
 
 
-router = APIRouter(tags=["/products"])
+router = APIRouter(
+    tags=["/products"],
+    dependencies=[
+        Depends(get_active_user_by_access_token),
+    ],
+)
 
 
 @router.get("/", response_model=List[Product])

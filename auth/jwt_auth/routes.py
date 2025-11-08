@@ -7,10 +7,10 @@ from core.helpers import db_helper
 from auth.jwt_auth.scheme import TokenInfo
 from routers.users.schemas import User, UserCreate
 from .services import validate_user_by_form
-from .helpers import (
-    token_creator,
-    get_user_by_access_token,
-    get_user_by_refresh_token,
+from .helpers import token_creator
+from .dependencies import (
+    get_active_user_by_access_token,
+    get_active_user_by_refresh_token,
     token_fields,
 )
 
@@ -32,7 +32,7 @@ async def issue_jwt(
 
 @jwt_auth_router.post("/refresh", response_model=TokenInfo)
 async def refresh_access_token(
-    user: Annotated[User, Depends(get_user_by_refresh_token)],
+    user: Annotated[User, Depends(get_active_user_by_refresh_token)],
     # cached data -- no problem
     payload: Annotated[dict, Depends(get_curr_user_payload)],
 ):
@@ -60,7 +60,7 @@ async def register_user(
 
 @jwt_auth_router.get("/me")
 async def check_self_info(
-    user: Annotated[User, Depends(get_user_by_access_token)],
+    user: Annotated[User, Depends(get_active_user_by_access_token)],
 ) -> dict[str, Any]:
     return {
         token_fields.USERNAME_FIELD: user.username,
