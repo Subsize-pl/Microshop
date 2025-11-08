@@ -73,8 +73,17 @@ class TokenCreatorHelper:
 
 
 class UserGetterByToken:
-    def __init__(self, token_type: str):
+    def __init__(
+        self,
+        token_type: str,
+        is_active: bool,
+        is_superuser: bool,
+        is_verified: bool,
+    ):
         self.token_type = token_type
+        self.is_active = is_active
+        self.is_superuser = is_superuser
+        self.is_verified = is_verified
 
     @staticmethod
     async def _get_user_by_sub(
@@ -106,26 +115,49 @@ class UserGetterByToken:
                 detail=f"expected {expected_token_type!r} token type but found {curr_token_type!r}",
             )
 
+    @staticmethod
+    def _validate_user(
+        user: User,
+        expected_is_active: bool,
+        expected_is_superuser: bool,
+        expected_is_verified: bool,
+    ) -> None:
+        if (
+            user.is_active != expected_is_active
+            or user.is_superuser != expected_is_superuser
+            or user.is_verified != expected_is_verified
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=(
+                    "User validation failed: "
+                    f"is_active={user.is_active}, expected={expected_is_active}; "
+                    f"is_superuser={user.is_superuser}, expected={expected_is_superuser}; "
+                    f"is_verified={user.is_verified}, expected={expected_is_verified}"
+                ),
+            )
+
     async def __call__(
         self,
         payload: dict = Depends(get_curr_user_payload),
         session: AsyncSession = Depends(db_helper.session_dependency),
-    ):
+    ) -> Optional[User]:
         self._validate_token_type(
             payload=payload,
             expected_token_type=self.token_type,
         )
-        return await self._get_user_by_sub(
+        user = await self._get_user_by_sub(
             payload=payload,
             session=session,
         )
+        self._validate_user(
+            user=user,
+            expected_is_active=self.is_active,
+            expected_is_superuser=self.is_superuser,
+            expected_is_verified=self.is_verified,
+        )
+        return user
 
 
 token_creator = TokenCreatorHelper()
 token_fields = TokenFieldHelper()
-get_user_by_access_token = UserGetterByToken(
-    token_type=token_fields.ACCESS_TOKEN_TYPE,
-)
-get_user_by_refresh_token = UserGetterByToken(
-    token_type=token_fields.REFRESH_TOKEN_TYPE,
-)
