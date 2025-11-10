@@ -15,6 +15,7 @@ class Category(Base):
     name: Mapped[str] = mapped_column(
         String(category_helper.MAX_NAME_LEN),
         nullable=category_helper.NAME_NULLABLE,
+        unique=category_helper.NAME_UNIQUE,
     )
 
     attributes: Mapped[List["Attribute"]] = relationship(
