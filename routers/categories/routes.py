@@ -1,8 +1,10 @@
 from typing import Annotated, Optional, List
-from auth.jwt_auth.dependencies import (
-    get_active_superuser_by_access_token,
+from auth.jwt_auth.helpers.user_getter_by_token import (
     get_active_user_by_access_token,
+    get_active_superuser_by_access_token,
 )
+from core.helpers.prefixes import Prefixes
+from core.helpers.tags import Tags
 from routers.categories import crud
 from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,8 +23,8 @@ from .utils import validate_category
 from routers.users.schemas import User
 
 router = APIRouter(
-    prefix="/categories",
-    tags=["Categories"],
+    prefix=Prefixes.categories,
+    tags=[Tags.categories],
 )
 
 
