@@ -42,4 +42,4 @@ class UserUpdate(UserBase):  # Partial update
 
 
 class UserDelete(UserBase):
-    pass
+    id: int
