@@ -1,21 +1,26 @@
-from typing import Optional, Any, Annotated
+from typing import Optional, Annotated
 from fastapi import Depends, Form, HTTPException, status, Body
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
-from .utils import decode_jwt
 from models.users import User as UserORM
 from core.helpers import db_helper
-from routers.users.schemas import UserCreate
-from jwt.exceptions import InvalidTokenError
-from routers.users.schemas import User
+from routers.users.schemas import UserCreate, User
 from core.helpers import pwd_helper
 
 
 async def validate_user_by_form(
-    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
-    username=Annotated[str, Form()],
-    password=Annotated[str, Form()],
+    username: Annotated[
+        str,
+        Form(examples=["username"]),
+    ],
+    password: Annotated[
+        str,
+        Form(examples=["password"]),
+    ],
+    session: Annotated[
+        AsyncSession,
+        Depends(db_helper.session_dependency),
+    ],
 ) -> Optional[User]:
     unauthed_exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -35,26 +40,6 @@ async def validate_user_by_form(
         raise unauthed_exc
 
     return user
-
-
-http_bearer = HTTPBearer()
-
-
-def get_curr_user_payload(
-    credentials: Annotated[
-        HTTPAuthorizationCredentials,
-        Depends(http_bearer),
-    ],
-) -> dict[str, Any]:
-    token = credentials.credentials
-    try:
-        payload = decode_jwt(jwt_token=token)
-    except InvalidTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
-        )
-    return payload
 
 
 async def ensure_unique_user(
